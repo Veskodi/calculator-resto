@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Калкулатор за ресто при плащане в BGN и EUR">
+    <meta name="theme-color" content="#003399">
+    <title>Калкулатор за плащане</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- iOS Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Калкулатор">
+    <link rel="apple-touch-icon" href="icon-512.png">
+    <style>
+        :root {
+            /* === СВЕТЛА ТЕМА === */
+            /* Backgrounds */
+            --bg-body: #f8fafc; 
+            --bg-card: #ffffff;
+            --shadow: 0 10px 40px -10px rgba(0,0,0,0.1); 
+            --input-bg: #f1f5f9;
+            --input-border: #e2e8f0;
+            --input-text: #0f172a;
+            --section-border: #e2e8f0;
+            
+            /* Text */
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-hint: #94a3b8;
+            
+            /* EUR - EU Blue */
+            --eur-primary: #003399;
+            --eur-bg: #e6eeff;
+            --eur-border: #b3ccff;
+            
+            /* BGN - Bulgarian Green */
+            --bgn-primary: #00966E;
+            --bgn-bg: #e6fff7;
+            --bgn-border: #99f5dd;
+            
+            /* Accent - Golden Yellow */
+            --accent-primary: #FFCC00;
+            
+            /* Semantic */
+            --success: #00966E;
+            --error: #dc2626;
+            --error-bg: #fef2f2;
+            --error-border: #fee2e2;
+            --warning: #f59e0b;
+            --warn-primary: #d97706;
+            --warn-bg: #fffbeb;
+            --warn-border: #fef3c7;
+            
+            /* Neutral (mixed totals) */
+            --neutral-primary: #475569;
+            --neutral-bg: #f1f5f9;
+            --neutral-border: #cbd5e1;
+            
+            /* Button */
+            --btn-bg: #475569;
+            --btn-text: #ffffff;
+            
+            /* Toggle */
+            --toggle-bg: #e2e8f0;
+            --toggle-icon: #1e293b;
+        }
+
+        [data-theme="dark"] {
+            /* === ТЪМНА ТЕМА - EU/BG Theme === */
+            /* Backgrounds - Midnight Navy & Dark Slate */
+            --bg-body: #0A0C10;
+            --bg-card: #161B22;
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --input-bg: #1C2128;
+            --input-border: #30363D;
+            --input-text: #F0F6FC;
+            --section-border: #30363D;
+            
+            /* Text - High Contrast & Cool Grey */
+            --text-primary: #F0F6FC;
+            --text-secondary: #8B949E;
+            --text-hint: #6E7781;
+            
+            /* EUR - Lightened EU Blue (WCAG compliant) */
+            --eur-primary: #4D9FFF;
+            --eur-bg: rgba(0, 51, 153, 0.2);
+            --eur-border: rgba(77, 159, 255, 0.3);
+            
+            /* BGN - Lightened Bulgarian Green (WCAG compliant) */
+            --bgn-primary: #00D896;
+            --bgn-bg: rgba(0, 150, 110, 0.2);
+            --bgn-border: rgba(0, 216, 150, 0.3);
+            
+            /* Accent - Golden Yellow */
+            --accent-primary: #FFCC00;
+            
+            /* Semantic */
+            --success: #00D896;
+            --error: #F85149;
+            --error-bg: rgba(248, 81, 73, 0.15);
+            --error-border: rgba(248, 81, 73, 0.3);
+            --warning: #FFA657;
+            --warn-primary: #FFA657;
+            --warn-bg: rgba(255, 166, 87, 0.15);
+            --warn-border: rgba(255, 166, 87, 0.3);
+            
+            /* Neutral - Cool Grey */
+            --neutral-primary: #8B949E;
+            --neutral-bg: rgba(139, 148, 158, 0.15);
+            --neutral-border: rgba(139, 148, 158, 0.3);
+            
+            /* Button - Cool Grey */
+            --btn-bg: #8B949E;
+            --btn-text: #0A0C10;
+            
+            /* Toggle */
+            --toggle-bg: #30363D;
+            --toggle-icon: #F0F6FC;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-body);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background-color 0.4s ease;
+        }
+
+        .calculator {
+            background: var(--bg-card);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            padding: 32px;
+            max-width: 480px;
+            width: 100%;
+            transition: background-color 0.4s ease;
+        }
+
+        .header-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 8px; 
+        }
+        
+        h1 { 
+            color: var(--text-primary); 
+            font-size: 22px; 
+            font-weight: 700; 
+            transition: color 0.4s ease;
+        }
+
+        .theme-toggle {
+            background: var(--toggle-bg); 
+            border: none; 
+            cursor: pointer; 
+            width: 40px; 
+            height: 40px;
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 18px;
+            transition: all 0.3s;
+            color: var(--toggle-icon);
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .exchange-rate {
+            color: var(--text-secondary); 
+            font-size: 13px; 
+            margin-bottom: 25px;
+            background: var(--input-bg); 
+            padding: 6px 12px; 
+            border-radius: 8px; 
+            display: inline-block;
+            transition: all 0.4s ease;
+        }
+
+        .section { 
+            margin-bottom: 24px; 
+            padding-bottom: 24px; 
+            border-bottom: 1px solid var(--section-border); 
+        }
+        
+        .section:last-of-type { 
+            border-bottom: none; 
+            margin-bottom: 0; 
+        }
+
+        .input-group { 
+            margin-bottom: 12px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+        }
+        
+        .input-group label { 
+            font-weight: 500; 
+            font-size: 14px; 
+            flex: 1; 
+            transition: color 0.4s ease;
+        }
+
+        /* Цветни labels за EUR и BGN */
+        .input-group.eur label { 
+            color: var(--eur-primary); 
+        }
+        
+        .input-group.bgn label { 
+            color: var(--bgn-primary); 
+        }
+
+        .input-wrapper { 
+            position: relative; 
+            width: 170px; 
+        }
+        
+        input {
+            width: 100%; 
+            padding: 12px 35px 12px 15px; 
+            border: 1.5px solid var(--input-border);
+            border-radius: 12px; 
+            font-size: 17px; 
+            font-weight: 600; 
+            background: var(--input-bg);
+            color: var(--input-text); 
+            text-align: left;
+            transition: all 0.3s;
+        }
+        
+        input:focus { 
+            outline: none; 
+            background: var(--bg-card); 
+            transform: scale(1.02);
+        }
+        
+        .input-group.eur input:focus {
+            border-color: var(--eur-primary);
+            box-shadow: 0 0 0 3px var(--eur-bg);
+        }
+        
+        .input-group.bgn input:focus {
+            border-color: var(--bgn-primary);
+            box-shadow: 0 0 0 3px var(--bgn-bg);
+        }
+
+        .hint-inline { 
+            position: absolute; 
+            right: 12px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: var(--text-hint); 
+            font-size: 14px; 
+            font-weight: 500;
+            transition: color 0.4s ease;
+        }
+
+        .section-title { 
+            font-size: 14px; 
+            font-weight: 500; 
+            color: var(--text-primary); 
+            margin-bottom: 8px;
+            transition: color 0.4s ease;
+        }
+        
+        /* Цветни section titles за total displays */
+        .section-title.bgn-label { 
+            color: var(--bgn-primary); 
+        }
+        
+        .section-title.neutral-label { 
+            color: var(--neutral-primary); 
+        }
+        
+        .section-title.warn-label { 
+            color: var(--warn-primary); 
+        }
+
+        .total-display {
+            padding: 16px; 
+            border-radius: 16px; 
+            display: flex; 
+            flex-direction: column; 
+            margin-bottom: 10px; 
+            border: 2px solid transparent; 
+            transition: all 0.3s;
+        }
+        
+        .total-display.bgn { 
+            background: var(--bgn-bg); 
+            border-color: var(--bgn-border); 
+        }
+        
+        .total-display.neutral { 
+            background: var(--neutral-bg); 
+            border-color: var(--neutral-border); 
+        }
+        
+        .total-display.shortage { 
+            background: var(--warn-bg); 
+            border-color: var(--warn-border); 
+        }
+        
+        .total-display.change-error { 
+            background: var(--error-bg); 
+            border-color: var(--error-border); 
+        }
+        
+        .total-display.change-success { 
+            background: var(--bgn-bg); 
+            border-color: var(--bgn-border); 
+        }
+
+        .total-value { 
+            font-size: 20px; 
+            font-weight: 700; 
+            text-align: right; 
+            transition: color 0.4s ease;
+        }
+        
+        .total-display.bgn .total-value { 
+            color: var(--bgn-primary); 
+        }
+        
+        .total-display.neutral .total-value { 
+            color: var(--neutral-primary); 
+        }
+        
+        .total-display.shortage .total-value { 
+            color: var(--warn-primary); 
+        }
+        
+        .total-display.change-error .total-value { 
+            color: var(--error); 
+        }
+        
+        .total-display.change-success .total-value { 
+            color: var(--bgn-primary); 
+        }
+
+        button.btn-clear {
+            width: 100%; 
+            padding: 16px; 
+            border: none; 
+            border-radius: 14px;
+            font-weight: 700; 
+            font-size: 15px;
+            background: var(--btn-bg); 
+            color: var(--btn-text); 
+            cursor: pointer; 
+            margin-top: 10px; 
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        button.btn-clear:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        button.btn-clear:active { 
+            transform: scale(0.98); 
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .shake { animation: shake 0.3s ease-in-out; }
+
+        @keyframes flash {
+            0%, 100% { background-color: var(--bgn-bg); }
+            50% { background-color: var(--bgn-border); }
+        }
+        .flash { animation: flash 0.5s ease-in-out; }
+
+        @media (max-width: 450px) { 
+            .calculator { padding: 24px; }
+            .input-wrapper { width: 145px; }
+            input { font-size: 16px; padding: 10px 30px 10px 12px; }
+            .total-value { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="header-row">
+            <h1>Калкулатор за плащане</h1>
+            <button class="theme-toggle" id="themeToggle" aria-label="Превключи тема">🌙</button>
+        </div>
+        <div class="exchange-rate">1 EUR = 1.95583 BGN</div>
+
+        <!-- СЕКЦИЯ ЦЕНА -->
+        <div class="section">
+            <div class="input-group eur">
+                <label>Цена в евро:</label>
+                <div class="input-wrapper">
+                    <input type="text" id="priceEUR" inputmode="decimal" placeholder="0.00" aria-label="Цена в евро">
+                    <span class="hint-inline">€</span>
+                </div>
+            </div>
+            <div class="input-group bgn">
+                <label>Цена в лева:</label>
+                <div class="input-wrapper">
+                    <input type="text" id="priceBGN" inputmode="decimal" placeholder="0.00" aria-label="Цена в лева">
+                    <span class="hint-inline">лв.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- СЕКЦИЯ ПЛАЩАНЕ -->
+        <div class="section">
+            <div class="section-title warn-label" id="shortageLabel" style="display: none;">Недостигат:</div>
+            <div class="total-display shortage" id="shortageDisplay" style="display: none;">
+                <span class="total-value" id="shortageAmount">0.00 € или 0.00 лв.</span>
+            </div>
+            <div class="input-group eur">
+                <label>Плащане в евро:</label>
+                <div class="input-wrapper">
+                    <input type="text" id="paidEUR" inputmode="decimal" placeholder="0.00" aria-label="Плащане в евро">
+                    <span class="hint-inline">€</span>
+                </div>
+            </div>
+            <div class="input-group bgn">
+                <label>Плащане в лева:</label>
+                <div class="input-wrapper">
+                    <input type="text" id="paidBGN" inputmode="decimal" placeholder="0.00" aria-label="Плащане в лева">
+                    <span class="hint-inline">лв.</span>
+                </div>
+            </div>
+            <div class="section-title neutral-label">ОБЩО платено:</div>
+            <div class="total-display neutral">
+                <span class="total-value" id="totalPaidBoth">0.00 € или 0.00 лв.</span>
+            </div>
+        </div>
+
+        <!-- СЕКЦИЯ РЕСТО -->
+        <div class="section">
+            <div class="section-title neutral-label">Ресто:</div>
+            <div class="total-display neutral">
+                <span class="total-value" id="totalChangeBoth">0.00 € или 0.00 лв.</span>
+            </div>
+            <div class="input-group eur">
+                <label>Ресто в евро:</label>
+                <div class="input-wrapper">
+                    <input type="text" id="changeEUR" inputmode="decimal" placeholder="0.00" aria-label="Ресто в евро">
+                    <span class="hint-inline">€</span>
+                </div>
+            </div>
+            <div class="input-group bgn">
+                <label>Ресто в лева:</label>
+                <div class="input-wrapper">
+                    <input type="text" id="changeBGN" inputmode="decimal" placeholder="0.00" aria-label="Ресто в лева">
+                    <span class="hint-inline">лв.</span>
+                </div>
+            </div>
+            <div class="total-display" id="changeErrorDisplay" style="display: none;">
+                <span class="total-value" id="changeErrorAmount"></span>
+            </div>
+        </div>
+
+        <button class="btn-clear" onclick="clearAll()">Изчисти</button>
+    </div>
+
+    <script>
+        const RATE = 1.95583;
+        
+        // Elements
+        const priceBGN = document.getElementById('priceBGN');
+        const priceEUR = document.getElementById('priceEUR');
+        const paidBGN = document.getElementById('paidBGN');
+        const paidEUR = document.getElementById('paidEUR');
+        const totalPaidBoth = document.getElementById('totalPaidBoth');
+        const shortageLabel = document.getElementById('shortageLabel');
+        const shortageDisplay = document.getElementById('shortageDisplay');
+        const shortageAmount = document.getElementById('shortageAmount');
+        const totalChangeBoth = document.getElementById('totalChangeBoth');
+        const changeBGN = document.getElementById('changeBGN');
+        const changeEUR = document.getElementById('changeEUR');
+        const changeErrorDisplay = document.getElementById('changeErrorDisplay');
+        const changeErrorAmount = document.getElementById('changeErrorAmount');
+
+        function parseValue(input) {
+            const value = input.value.trim().replace(',', '.');
+            const num = parseFloat(value);
+            return isNaN(num) || num < 0 ? 0 : num;
+        }
+
+        function sanitizeInput(input) {
+            let value = input.value;
+            value = value.replace(/[^0-9.,]/g, '');
+            value = value.replace(/^0+([1-9])/, '$1');
+            value = value.replace(',', '.');
+            const parts = value.split('.');
+            if (parts.length > 2) value = parts[0] + '.' + parts.slice(1).join('');
+            if (parts.length === 2 && parts[1].length > 2) value = parts[0] + '.' + parts[1].substring(0, 2);
+            input.value = value;
+        }
+
+        function formatBGN(amount) { return (Math.round(amount * 100) / 100).toFixed(2); }
+        function formatEUR(amount) { return (Math.round(amount * 100) / 100).toFixed(2); }
+        function bgnToEur(bgn) { return bgn / RATE; }
+        function eurToBgn(eur) { return eur * RATE; }
+
+        // Price sync
+        priceBGN.addEventListener('input', function() { 
+            sanitizeInput(this); 
+            const bgnVal = parseValue(this);
+            priceEUR.value = bgnVal > 0 ? formatEUR(bgnToEur(bgnVal)) : '';
+            calculate(); 
+        });
+
+        priceEUR.addEventListener('input', function() { 
+            sanitizeInput(this); 
+            const eurVal = parseValue(this);
+            priceBGN.value = eurVal > 0 ? formatBGN(eurToBgn(eurVal)) : '';
+            calculate(); 
+        });
+
+        // Payment listeners
+        paidBGN.addEventListener('input', function() { sanitizeInput(this); calculate(); });
+        paidEUR.addEventListener('input', function() { sanitizeInput(this); calculate(); });
+
+        // Change listeners
+        changeBGN.addEventListener('input', function() { 
+            sanitizeInput(this); 
+            validateChangeReturn(); 
+        });
+        changeEUR.addEventListener('input', function() { 
+            sanitizeInput(this); 
+            validateChangeReturn(); 
+        });
+
+        function calculate() {
+            const paidBgnVal = parseValue(paidBGN);
+            const paidEurVal = parseValue(paidEUR);
+            const paidTotal = paidBgnVal + eurToBgn(paidEurVal);
+            
+            totalPaidBoth.textContent = formatEUR(bgnToEur(paidTotal)) + ' € или ' + formatBGN(paidTotal) + ' лв.';
+            
+            const priceVal = parseValue(priceBGN);
+            const difference = paidTotal - priceVal;
+            
+            if (difference < 0 && paidTotal > 0) {
+                const shortage = Math.abs(difference);
+                shortageAmount.textContent = formatEUR(bgnToEur(shortage)) + ' € или ' + formatBGN(shortage) + ' лв.';
+                shortageLabel.style.display = 'block';
+                shortageDisplay.style.display = 'flex';
+                totalChangeBoth.textContent = '0.00 € или 0.00 лв.';
+                totalChangeBoth.dataset.value = '0';
+                changeBGN.value = '';
+                changeEUR.value = '';
+            } else if (difference < 0 && paidTotal === 0) {
+                shortageLabel.style.display = 'none';
+                shortageDisplay.style.display = 'none';
+                totalChangeBoth.textContent = '0.00 € или 0.00 лв.';
+                totalChangeBoth.dataset.value = '0';
+                changeBGN.value = '';
+                changeEUR.value = '';
+            } else {
+                shortageLabel.style.display = 'none';
+                shortageDisplay.style.display = 'none';
+                totalChangeBoth.textContent = formatEUR(bgnToEur(difference)) + ' € или ' + formatBGN(difference) + ' лв.';
+                totalChangeBoth.dataset.value = difference;
+            }
+            validateChangeReturn();
+        }
+
+        function validateChangeReturn() {
+            const expectedChange = parseFloat(totalChangeBoth.dataset.value) || 0;
+            const returnedBGN = parseValue(changeBGN);
+            const returnedEUR = parseValue(changeEUR);
+            const totalReturnedBGN = returnedBGN + eurToBgn(returnedEUR);
+            
+            if (returnedBGN === 0 && returnedEUR === 0) {
+                changeErrorDisplay.style.display = 'none';
+                return;
+            }
+            
+            const difference = totalReturnedBGN - expectedChange;
+            const absDiff = Math.abs(difference);
+            
+            if (absDiff < 0.01) {
+                changeErrorDisplay.style.display = 'flex';
+                changeErrorDisplay.className = 'total-display change-success flash';
+                changeErrorAmount.textContent = 'Точно';
+                setTimeout(() => changeErrorDisplay.classList.remove('flash'), 500);
+            } else if (difference > 0) {
+                changeErrorDisplay.style.display = 'flex';
+                changeErrorDisplay.className = 'total-display change-error shake';
+                changeErrorAmount.textContent = formatEUR(bgnToEur(absDiff)) + ' € или ' + formatBGN(absDiff) + ' лв. повече';
+                setTimeout(() => changeErrorDisplay.classList.remove('shake'), 300);
+            } else {
+                changeErrorDisplay.style.display = 'flex';
+                changeErrorDisplay.className = 'total-display change-error shake';
+                changeErrorAmount.textContent = formatEUR(bgnToEur(absDiff)) + ' € или ' + formatBGN(absDiff) + ' лв. по-малко';
+                setTimeout(() => changeErrorDisplay.classList.remove('shake'), 300);
+            }
+        }
+
+        function clearAll() {
+            [priceBGN, priceEUR, paidBGN, paidEUR, changeBGN, changeEUR].forEach(i => i.value = '');
+            totalPaidBoth.textContent = '0.00 € или 0.00 лв.';
+            shortageLabel.style.display = 'none';
+            shortageDisplay.style.display = 'none';
+            totalChangeBoth.textContent = '0.00 € или 0.00 лв.';
+            totalChangeBoth.dataset.value = '0';
+            changeErrorDisplay.style.display = 'none';
+            priceEUR.focus();
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') clearAll();
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const inputs = [priceEUR, priceBGN, paidEUR, paidBGN, changeEUR, changeBGN];
+                const idx = inputs.findIndex(i => i === document.activeElement);
+                if (idx !== -1 && idx < inputs.length - 1) inputs[idx + 1].focus();
+            }
+        });
+
+        // Theme toggle
+        const themeBtn = document.getElementById('themeToggle');
+        
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+        
+        themeBtn.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+        });
+        
+        // Initialize theme
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        setTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+
+        // Auto-focus on load
+        window.addEventListener('load', () => priceEUR.focus());
+        calculate();
+
+        // Service Worker registration for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed'));
+            });
+        }
+    </script>
+</body>
+</html>
