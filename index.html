@@ -6,7 +6,6 @@
     
     <!-- SEO Meta Tags -->
     <meta name="description" content="Безплатен калкулатор за изчисляване на ресто при плащане в евро и лева. Поддържа смесени валути EUR/BGN с автоматично конвертиране по курс 1.95583.">
-    <meta name="keywords" content="калкулатор, евро, лева, ресто, плащане, EUR, BGN, валута, конвертор, calculator, currency, change">
     <meta name="author" content="Veskodi">
     <meta name="theme-color" content="#003399">
     <meta name="robots" content="index, follow">
@@ -18,6 +17,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://calculator-resto.pages.dev/">
     <meta property="og:title" content="Калкулатор за плащане EUR/BGN">
+    <meta property="og:site_name" content="Калкулатор EUR/BGN">
     <meta property="og:description" content="Безплатен калкулатор за изчисляване на ресто при плащане в евро и лева. Работи offline, поддържа смесени валути.">
     <meta property="og:image" content="https://calculator-resto.pages.dev/icon-512.png">
     <meta property="og:locale" content="bg_BG">
@@ -42,7 +42,8 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
+      "@type": ["WebApplication", "SoftwareApplication"],
+      "@id": "https://calculator-resto.pages.dev/#app",
       "name": "Калкулатор за плащане EUR/BGN",
       "alternateName": "EUR BGN Change Calculator",
       "description": "Безплатен калкулатор за изчисляване на ресто при плащане в евро и лева. Поддържа смесени валути с автоматично конвертиране.",
@@ -63,6 +64,10 @@
         "Dark/Light тема",
         "PWA приложение"
       ],
+      "publisher": {
+        "@type": "Person",
+        "name": "Veskodi"
+      },
       "softwareVersion": "1.0",
       "inLanguage": "bg"
     }
@@ -187,6 +192,7 @@
             background: var(--bg-body);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
@@ -438,6 +444,47 @@
             transform: scale(0.98); 
         }
 
+        /* SEO Content Section */
+        .seo-content {
+            margin-top: 48px;
+            max-width: 480px;
+            width: 100%;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            transition: color 0.4s ease;
+        }
+
+        .seo-content h2 {
+            color: var(--text-primary);
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            transition: color 0.4s ease;
+        }
+
+        .seo-content h3 {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            transition: color 0.4s ease;
+        }
+
+        .seo-content p {
+            margin-bottom: 12px;
+        }
+
+        .seo-content ul {
+            margin-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .seo-content li {
+            margin-bottom: 6px;
+        }
+
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
@@ -456,6 +503,7 @@
             .input-wrapper { width: 145px; }
             input { font-size: 16px; padding: 10px 30px 10px 12px; }
             .total-value { font-size: 18px; }
+            .seo-content { font-size: 13px; }
         }
     </style>
 </head>
@@ -470,14 +518,14 @@
         <!-- СЕКЦИЯ ЦЕНА -->
         <div class="section">
             <div class="input-group eur">
-                <label>Цена в евро:</label>
+                <label for="priceEUR">Цена в евро:</label>
                 <div class="input-wrapper">
                     <input type="text" id="priceEUR" inputmode="decimal" placeholder="0.00" aria-label="Цена в евро">
                     <span class="hint-inline">€</span>
                 </div>
             </div>
             <div class="input-group bgn">
-                <label>Цена в лева:</label>
+                <label for="priceBGN">Цена в лева:</label>
                 <div class="input-wrapper">
                     <input type="text" id="priceBGN" inputmode="decimal" placeholder="0.00" aria-label="Цена в лева">
                     <span class="hint-inline">лв.</span>
@@ -492,14 +540,14 @@
                 <span class="total-value" id="shortageAmount">0.00 € или 0.00 лв.</span>
             </div>
             <div class="input-group eur">
-                <label>Плащане в евро:</label>
+                <label for="paidEUR">Плащане в евро:</label>
                 <div class="input-wrapper">
                     <input type="text" id="paidEUR" inputmode="decimal" placeholder="0.00" aria-label="Плащане в евро">
                     <span class="hint-inline">€</span>
                 </div>
             </div>
             <div class="input-group bgn">
-                <label>Плащане в лева:</label>
+                <label for="paidBGN">Плащане в лева:</label>
                 <div class="input-wrapper">
                     <input type="text" id="paidBGN" inputmode="decimal" placeholder="0.00" aria-label="Плащане в лева">
                     <span class="hint-inline">лв.</span>
@@ -518,14 +566,14 @@
                 <span class="total-value" id="totalChangeBoth">0.00 € или 0.00 лв.</span>
             </div>
             <div class="input-group eur">
-                <label>Ресто в евро:</label>
+                <label for="changeEUR">Ресто в евро:</label>
                 <div class="input-wrapper">
                     <input type="text" id="changeEUR" inputmode="decimal" placeholder="0.00" aria-label="Ресто в евро">
                     <span class="hint-inline">€</span>
                 </div>
             </div>
             <div class="input-group bgn">
-                <label>Ресто в лева:</label>
+                <label for="changeBGN">Ресто в лева:</label>
                 <div class="input-wrapper">
                     <input type="text" id="changeBGN" inputmode="decimal" placeholder="0.00" aria-label="Ресто в лева">
                     <span class="hint-inline">лв.</span>
@@ -538,6 +586,41 @@
 
         <button class="btn-clear" onclick="clearAll()">Изчисти</button>
     </div>
+
+    <!-- SEO Content Section -->
+    <section class="seo-content">
+        <h2>Калкулатор за ресто в евро и лева</h2>
+        <p>
+            Този безплатен калкулатор помага за бързо и точно изчисляване на ресто при плащане 
+            в евро и лева по фиксиран обменен курс 1 EUR = 1.95583 BGN. Подходящ е за търговци, 
+            каси, магазини и всеки, който приема смесени валути.
+        </p>
+
+        <h3>Основни функции</h3>
+        <ul>
+            <li><strong>Смесено плащане EUR/BGN</strong> – въвеждате едновременно евро и лева</li>
+            <li><strong>Автоматично конвертиране</strong> – моментално преизчисляване между валутите</li>
+            <li><strong>Изчисляване на ресто</strong> – точна проверка на връщаното ресто</li>
+            <li><strong>Работа без интернет</strong> – PWA приложение с offline функционалност</li>
+            <li><strong>Тъмна и светла тема</strong> – комфортна работа при всякакви условия</li>
+            <li><strong>Мобилно приложение</strong> – може да се инсталира на телефон или таблет</li>
+        </ul>
+
+        <h3>Как се използва</h3>
+        <p>
+            Въведете цената на продукта в евро или лева – другата валута се изчислява автоматично. 
+            След това въведете какво е платил клиентът (също може да бъде смесено EUR+BGN). 
+            Калкулаторът моментално показва колко ресто трябва да върнете, както и предупреждава 
+            ако ресто е грешно.
+        </p>
+
+        <h3>За кого е подходящ</h3>
+        <p>
+            Калкулаторът е особено полезен за търговци и каси в гранични райони, туристически 
+            зони и всички места където се приемат както евро, така и лева. Работи напълно безплатно, 
+            без реклами и без нужда от регистрация.
+        </p>
+    </section>
 
     <script>
         const RATE = 1.95583;
