@@ -10,6 +10,10 @@
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
     
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' 
+            data-cf-beacon='{"token": "ТУК_ТОКЕНЪТ_ОТ_CLOUDFLARE"}'></script>
+    
     <!-- iOS Support -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -663,6 +667,9 @@
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         setTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
 
+        // Auto-focus on load
+        window.addEventListener('load', () => priceEUR.focus());
+        calculate();
         // Auto-focus on load
         window.addEventListener('load', () => priceEUR.focus());
         calculate();
