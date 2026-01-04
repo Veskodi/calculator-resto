@@ -3,9 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Калкулатор за ресто при плащане в BGN и EUR">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Безплатен калкулатор за изчисляване на ресто при плащане в евро и лева. Поддържа смесени валути EUR/BGN с автоматично конвертиране по курс 1.95583.">
+    <meta name="keywords" content="калкулатор, евро, лева, ресто, плащане, EUR, BGN, валута, конвертор, calculator, currency, change">
+    <meta name="author" content="Veskodi">
     <meta name="theme-color" content="#003399">
-    <title>Калкулатор за плащане</title>
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://calculator-resto.pages.dev/">
+    
+    <title>Калкулатор за плащане EUR/BGN | Изчисляване на ресто в евро и лева</title>
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculator-resto.pages.dev/">
+    <meta property="og:title" content="Калкулатор за плащане EUR/BGN">
+    <meta property="og:description" content="Безплатен калкулатор за изчисляване на ресто при плащане в евро и лева. Работи offline, поддържа смесени валути.">
+    <meta property="og:image" content="https://calculator-resto.pages.dev/icon-512.png">
+    <meta property="og:locale" content="bg_BG">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:url" content="https://calculator-resto.pages.dev/">
+    <meta name="twitter:title" content="Калкулатор за плащане EUR/BGN">
+    <meta name="twitter:description" content="Безплатен калкулатор за изчисляване на ресто при плащане в евро и лева.">
+    <meta name="twitter:image" content="https://calculator-resto.pages.dev/icon-512.png">
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -13,8 +35,39 @@
     <!-- iOS Support -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Калкулатор">
+    <meta name="apple-mobile-web-app-title" content="Калкулатор EUR/BGN">
     <link rel="apple-touch-icon" href="icon-512.png">
+    
+    <!-- Schema.org structured data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Калкулатор за плащане EUR/BGN",
+      "alternateName": "EUR BGN Change Calculator",
+      "description": "Безплатен калкулатор за изчисляване на ресто при плащане в евро и лева. Поддържа смесени валути с автоматично конвертиране.",
+      "url": "https://calculator-resto.pages.dev/",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript. Works offline as PWA.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "featureList": [
+        "Автоматично конвертиране EUR/BGN",
+        "Изчисляване на ресто",
+        "Смесени валути",
+        "Offline функционалност",
+        "Dark/Light тема",
+        "PWA приложение"
+      ],
+      "softwareVersion": "1.0",
+      "inLanguage": "bg"
+    }
+    </script>
+    
     <style>
         :root {
             /* === СВЕТЛА ТЕМА === */
